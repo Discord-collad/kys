@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Usuario · Dirección</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+<body class="app-body">
+    <th:block th:replace="~{fragments/sidebar :: sidebar('usuarios')}"></th:block>
+
+    <main class="container" style="max-width:760px;">
+        <div th:if="${error}" class="alerta alerta-error" th:text="${error}"></div>
+        <div th:if="${mensaje}" class="alerta alerta-ok" th:text="${mensaje}"></div>
+        <section class="card">
+            <div class="card-head"><h2>Datos</h2></div>
+            <form th:action="@{/admin/usuarios/guardar}" method="post" th:object="${usuario}">
+                <input type="hidden" th:field="*{id}" th:if="${usuario.id != null}" />
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Nombre</label>
+                        <input type="text" th:field="*{nombre}" required />
+                    </div>
+                    <div class="form-group">
+                        <label>Apellido</label>
+                        <input type="text" th:field="*{apellido}" required />
+                    </div>
+                </div>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" th:field="*{email}" required />
+                    </div>
+                    <div class="form-group">
+                        <label>Usuario</label>
+                        <input type="text" th:field="*{username}" required />
+                    </div>
+                </div>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Contraseña</label>
+                        <input type="password" name="password"
+                               th:required="${usuario.id == null}"
+                               th:placeholder="${usuario.id != null ? 'Dejar vacío para mantener' : 'Mínimo 6 caracteres'}" />
+                    </div>
+                    <div class="form-group">
+                        <label>Rol</label>
+                        <select name="rolId" required>
+                            <option value="">Seleccionar…</option>
+                            <option th:each="rol : ${roles}"
+                                    th:value="${rol.id}"
+                                    th:text="${rol.nombre}"
+                                    th:selected="${usuario.rol != null && usuario.rol.id == rol.id}"></option>
+                        </select>
+                    </div>
+                </div>
+                <label class="check-row">
+                    <input type="checkbox" th:field="*{estado}" /> Usuario activo
+                </label>
+                <div class="acciones-form">
+                    <button type="submit" class="btn btn-primario">Guardar</button>
+                    <a href="/admin" class="btn btn-suave">Cancelar</a>
+                </div>
+            </form>
+        </section>
+    </main>
+
+    <script th:src="@{/js/sidebar.js}" defer></script>
+</body>
+</html>

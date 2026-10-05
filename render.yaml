@@ -1,0 +1,38 @@
+services:
+  - type: web
+    name: kys
+    runtime: java
+    plan: free
+    region: oregon
+    buildCommand: ./mvnw -DskipTests package
+    startCommand: java -jar target/kys-0.0.1-SNAPSHOT.jar
+    healthCheckPath: /login
+    envVars:
+      - key: JAVA_VERSION
+        value: "21"
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+      # La URL/usuario/pass se inyectan desde la DB de abajo (fromDatabase)
+      - key: SPRING_DATASOURCE_URL
+        fromDatabase:
+          name: kys-db
+          property: connectionString
+      - key: SPRING_DATASOURCE_USERNAME
+        fromDatabase:
+          name: kys-db
+          property: user
+      - key: SPRING_DATASOURCE_PASSWORD
+        fromDatabase:
+          name: kys-db
+          property: password
+      # En prod NO corremos migration.sql al arrancar: los datos se restauran con pg_restore
+      - key: SPRING_SQL_INIT_MODE
+        value: never
+
+  - type: postgres
+    name: kys-db
+    plan: free
+    region: oregon
+    databaseName: kys
+    user: kys
+    ipAllowList: []  # sólo conexiones internas; para restaurar se abre temporalmente

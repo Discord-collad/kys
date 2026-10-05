@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Fragmento saludo KYS</title>
+</head>
+<body>
+
+<!-- ============================================================
+     FRAGMENT: saludo(subtitulo)
+     Uso en el inicio de cada panel:
+     <th:block th:replace="~{fragments/saludo :: saludo('Administra usuarios, cursos, horarios y asistencia desde un solo lugar.')}"></th:block>
+     Usa saludoAleatorio / nombreParaMostrar de GlobalModelAdvice.
+     ============================================================ -->
+<section class="saludo-card" th:fragment="saludo(subtitulo)">
+    <h1 th:text="${saludoAleatorio}">¡Bienvenido!</h1>
+    <p class="muted" th:text="${subtitulo}">Tu panel de trabajo.</p>
+</section>
+
+</body>
+</html>

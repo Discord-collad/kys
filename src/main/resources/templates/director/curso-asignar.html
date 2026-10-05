@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asignar curso · Dirección</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+<body class="app-body">
+    <th:block th:replace="~{fragments/sidebar :: sidebar('asignar-curso')}"></th:block>
+
+    <main class="container">
+        <div th:if="${mensaje}" class="alerta alerta-ok" th:text="${mensaje}"></div>
+        <section class="card">
+            <div class="card-head"><h2>Asignar alumnos a un curso</h2></div>
+            <form th:action="@{/admin/cursos/asignar}" method="post">
+                <div class="form-group">
+                    <label>Curso</label>
+                    <select name="cursoId" required>
+                        <option value="">Elegí un curso…</option>
+                        <option th:each="c : ${cursos}" th:value="${c.id}" th:text="${c.nombre}"></option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Alumnos</label>
+                    <select name="usuarioIds" multiple size="8" style="height:auto;">
+                        <option th:each="u : ${alumnos}"
+                                th:value="${u.id}"
+                                th:text="${u.nombre + ' ' + u.apellido + ' (' + u.username + ')'}"></option>
+                    </select>
+                    <small style="color:#64748b;">Mantené Ctrl/Cmd presionado para seleccionar varios.</small>
+                </div>
+                <div class="acciones-form">
+                    <button type="submit" class="btn btn-primario">Asignar</button>
+                </div>
+            </form>
+        </section>
+    </main>
+
+    <script th:src="@{/js/sidebar.js}" defer></script>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Cuenta · KYS</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+<body class="auth-body">
+    <span class="blob b1"></span>
+    <span class="blob b2"></span>
+    <span class="blob b3"></span>
+
+    <div class="tarjeta tarjeta-amplia">
+        <div class="logo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                <circle cx="8.5" cy="7" r="4"/>
+                <line x1="20" y1="8" x2="20" y2="14"/>
+                <line x1="23" y1="11" x2="17" y2="11"/>
+            </svg>
+        </div>
+        <h1>Creá tu cuenta</h1>
+        <p class="sub">Registrate para llevar el control de tu asistencia</p>
+
+        <div th:if="${error}" class="aviso aviso-error" th:text="${error}">Error</div>
+
+        <form th:action="@{/registro}" method="post" th:object="${usuario}" id="formRegistro">
+            <div class="fila">
+                <div>
+                    <label>Nombre</label>
+                    <div class="campo">
+                        <svg class="icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                        <input type="text" th:field="*{nombre}" placeholder="Juan" required>
+                    </div>
+                </div>
+                <div>
+                    <label>Apellido</label>
+                    <div class="campo">
+                        <svg class="icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                        <input type="text" th:field="*{apellido}" placeholder="Pérez" required>
+                    </div>
+                </div>
+            </div>
+
+            <label>Email</label>
+            <div class="campo">
+                <svg class="icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                <input type="email" th:field="*{email}" placeholder="tu@email.com" required
+                       autocomplete="email" autocapitalize="none" autocorrect="off" spellcheck="false">
+            </div>
+
+            <label>Nombre de usuario</label>
+            <div class="campo">
+                <svg class="icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <input type="text" th:field="*{username}" placeholder="ej: juanperez" required minlength="4"
+                       autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false">
+            </div>
+
+            <div class="fila">
+                <div>
+                    <label>Contraseña</label>
+                    <div class="campo">
+                        <svg class="icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                        <input type="password" id="pass1" name="password" placeholder="Mínimo 6 caracteres" required minlength="6">
+                    </div>
+                </div>
+                <div>
+                    <label>Confirmar contraseña</label>
+                    <div class="campo">
+                        <svg class="icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                        <input type="password" id="pass2" name="confirmar" placeholder="Repetí la contraseña" required>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-crear">Crear mi cuenta</button>
+        </form>
+
+        <p class="pie">¿Ya tenés cuenta? <a th:href="@{/login}">Iniciá sesión</a></p>
+    </div>
+
+    <script>
+        document.getElementById('formRegistro').addEventListener('submit', function (e) {
+            const p1 = document.getElementById('pass1');
+            const p2 = document.getElementById('pass2');
+            if (p1.value !== p2.value) {
+                e.preventDefault();
+                alert('Las contraseñas no coinciden');
+                p2.focus();
+            }
+        });
+    </script>
+</body>
+</html>

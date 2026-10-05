@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi horario · KYS</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+<body class="app-body">
+    <th:block th:replace="~{fragments/sidebar :: sidebar('horario')}"></th:block>
+
+    <main class="container">
+        <section class="page-head">
+            <div>
+                <h1>Mi horario</h1>
+                <p class="muted">Horario asignado por la dirección.</p>
+            </div>
+        </section>
+
+        <section class="card">
+            <div th:if="${horario != null}">
+                <div class="stats stats-main">
+                    <div class="stat-card">
+                        <div class="stat-icon fondo-indigo">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        </div>
+                        <div class="stat-info">
+                            <h3 th:text="${#temporals.format(horario.horaEntrada, 'HH:mm')}">08:00</h3>
+                            <p>Hora de entrada</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon fondo-verde">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        </div>
+                        <div class="stat-info">
+                            <h3 th:text="${#temporals.format(horario.horaSalida, 'HH:mm')}">17:00</h3>
+                            <p>Hora de salida</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon fondo-ambar">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                        </div>
+                        <div class="stat-info">
+                            <h3><span th:text="${horario.toleranciaMinutos ?: 0}">15</span> min</h3>
+                            <p>Tolerancia de llegada</p>
+                        </div>
+                    </div>
+                </div>
+                <p class="muted small">Horario: <strong th:text="${horario.nombre}">Turno mañana</strong></p>
+                <p class="muted small">Si registrás tu entrada después de la hora de entrada más la tolerancia, se marca como tardanza.</p>
+            </div>
+
+            <div th:if="${horario == null}" class="vacio" style="padding:36px; text-align:center; color:#64748b;">
+                <p style="font-size:16px; font-weight:600;">Todavía no tenés un horario asignado.</p>
+                <p class="muted" style="margin-top:8px;">Cuando la dirección te asigne uno, vas a verlo acá.</p>
+            </div>
+        </section>
+    </main>
+
+    <script th:src="@{/js/sidebar.js}" defer></script>
+</body>
+</html>

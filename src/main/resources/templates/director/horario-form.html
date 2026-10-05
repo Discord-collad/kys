@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Horario · Dirección</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+<body class="app-body">
+    <th:block th:replace="~{fragments/sidebar :: sidebar('horarios')}"></th:block>
+
+    <main class="container" style="max-width:560px;">
+        <section class="card">
+            <div class="card-head"><h2>Datos del horario</h2></div>
+            <form th:action="@{/admin/horarios/guardar}" method="post" th:object="${horario}">
+                <input type="hidden" th:field="*{id}" th:if="${horario.id != null}" />
+                <div class="form-group">
+                    <label>Nombre</label>
+                    <input type="text" th:field="*{nombre}" required placeholder="Ej: Turno Mañana" />
+                </div>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Hora entrada</label>
+                        <input type="time" th:field="*{horaEntrada}" required />
+                    </div>
+                    <div class="form-group">
+                        <label>Hora salida</label>
+                        <input type="time" th:field="*{horaSalida}" required />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Tolerancia (minutos)</label>
+                    <input type="number" th:field="*{toleranciaMinutos}" min="0" max="120" />
+                </div>
+                <div class="acciones-form">
+                    <button type="submit" class="btn btn-primario">Guardar</button>
+                    <a href="/admin/horarios" class="btn btn-suave">Cancelar</a>
+                </div>
+            </form>
+        </section>
+    </main>
+
+    <script th:src="@{/js/sidebar.js}" defer></script>
+</body>
+</html>

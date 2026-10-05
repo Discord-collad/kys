@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Usuarios · KYS</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+<body class="app-body">
+    <th:block th:replace="~{fragments/sidebar :: sidebar('usuarios')}"></th:block>
+
+    <main class="container">
+        <div th:if="${mensaje}" class="alerta alerta-ok" th:text="${mensaje}"></div>
+        <div th:if="${error}" class="alerta alerta-error" th:text="${error}"></div>
+
+        <section class="page-head">
+            <div>
+                <h1>Usuarios</h1>
+                <p class="muted">Alta, edición y estado de los usuarios del sistema.</p>
+            </div>
+            <a href="/admin/usuarios/nuevo" class="btn btn-primario">+ Nuevo usuario</a>
+        </section>
+
+        <section class="card">
+            <div class="search-bar">
+                <input type="text" id="filtroTexto" placeholder="Buscar por nombre, usuario o email…" autocomplete="off">
+                <select id="filtroRol">
+                    <option value="">Todos los roles</option>
+                    <option value="DIRECTOR">DIRECTOR</option>
+                    <option value="PROFESOR">PROFESOR</option>
+                    <option value="ALUMNO">ALUMNO</option>
+                </select>
+                <select id="filtroEstado">
+                    <option value="">Todos los estados</option>
+                    <option value="activo">Activo</option>
+                    <option value="inactivo">Inactivo</option>
+                </select>
+                <span class="muted" id="contadorFilas"></span>
+            </div>
+            <div class="tabla-wrap">
+                <table id="tablaUsuarios">
+                    <thead>
+                        <tr><th>ID</th><th>Nombre</th><th>Usuario</th><th>Email</th><th>Rol</th><th>Estado</th><th>Acciones</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="usuario : ${usuarios}"
+                            th:data-nombre="${usuario.nombre + ' ' + usuario.apellido}"
+                            th:data-username="${usuario.username}"
+                            th:data-email="${usuario.email}"
+                            th:data-rol="${usuario.rol?.nombre}"
+                            th:data-estado="${usuario.estado} ? 'activo' : 'inactivo'">
+                            <td th:text="${usuario.id}">1</td>
+                            <td th:text="${usuario.nombre + ' ' + usuario.apellido}">Nombre</td>
+                            <td>
+                                <span th:text="${usuario.username}">user</span>
+                                <span th:if="${enLinea.contains(usuario.username)}" class="punto punto-online" title="En línea"></span>
+                                <span th:unless="${enLinea.contains(usuario.username)}" class="punto punto-offline" title="Desconectado"></span>
+                            </td>
+                            <td th:text="${usuario.email}">mail</td>
+                            <td><span class="badge"
+                                      th:classappend="${usuario.rol?.nombre == 'DIRECTOR'} ? 'badge-indigo' : (${usuario.rol?.nombre == 'PROFESOR'} ? 'badge-teal' : 'badge-ambar')"
+                                      th:text="${usuario.rol?.nombre}">ROL</span></td>
+                            <td>
+                                <span th:if="${usuario.estado}" class="badge badge-verde">Activo</span>
+                                <span th:unless="${usuario.estado}" class="badge badge-rojo">Inactivo</span>
+                            </td>
+                            <td>
+                                <a th:href="@{/admin/usuarios/editar/{id}(id=${usuario.id})}" class="btn btn-suave btn-sm">Editar</a>
+                                <form th:action="@{/admin/usuarios/eliminar/{id}(id=${usuario.id})}" method="post" style="display:inline;"
+                                      onsubmit="return confirm('¿Eliminar este usuario? Se borrará su historial de asistencias.')">
+                                    <button type="submit" class="btn btn-peligro btn-sm">Eliminar</button>
+                                </form>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(usuarios)}">
+                            <td colspan="7" class="vacio">No hay usuarios registrados todavía.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p class="muted small">Búsqueda y filtros client-side (sin recargar). Paginación server-side pendiente: la tabla carga el total actual, apta para cientos de filas.</p>
+        </section>
+    </main>
+
+    <script th:src="@{/js/sidebar.js}" defer></script>
+    <script>
+        // Filtros client-side tabla usuarios (trasladados del dashboard)
+        const t = document.getElementById('filtroTexto');
+        const r = document.getElementById('filtroRol');
+        const s = document.getElementById('filtroEstado');
+        const filas = () => Array.from(document.querySelectorAll('#tablaUsuarios tbody tr'));
+        const cont = document.getElementById('contadorFilas');
+        function aplicarFiltros() {
+            const q = (t.value || '').toLowerCase();
+            let vis = 0;
+            filas().forEach(tr => {
+                if (!tr.dataset.rol) return; // fila del th:if vacía
+                const okQ = !q || (tr.dataset.nombre + ' ' + tr.dataset.username + ' ' + tr.dataset.email).toLowerCase().includes(q);
+                const okR = !r.value || tr.dataset.rol === r.value;
+                const okS = !s.value || tr.dataset.estado === s.value;
+                const show = okQ && okR && okS;
+                tr.style.display = show ? '' : 'none';
+                if (show) vis++;
+            });
+            cont.textContent = vis + ' visibles';
+        }
+        [t, r, s].forEach(el => el.addEventListener('input', aplicarFiltros));
+        aplicarFiltros();
+    </script>
+</body>
+</html>

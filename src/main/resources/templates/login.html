@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión · KYS</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+<body class="auth-body">
+    <span class="blob b1"></span>
+    <span class="blob b2"></span>
+    <span class="blob b3"></span>
+
+    <div class="tarjeta">
+        <div class="logo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+                <polyline points="12 6 12 12 16 14"/>
+            </svg>
+        </div>
+        <h1>¡Bienvenido de nuevo!</h1>
+        <p class="sub">Iniciá sesión en tu cuenta de KYS</p>
+
+        <div th:if="${param.error}" class="aviso aviso-error">
+            <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            Usuario o contraseña incorrectos
+        </div>
+
+        <div th:if="${mensaje}" class="aviso aviso-ok" th:text="${mensaje}">Cuenta creada</div>
+
+        <form th:action="@{/login}" method="post">
+            <label for="username">Usuario</label>
+            <div class="campo">
+                <svg class="icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                </svg>
+                <input type="text" id="username" name="username" placeholder="Tu usuario" required autofocus
+                       autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false">
+            </div>
+
+            <label for="password">Contraseña</label>
+            <div class="campo">
+                <svg class="icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="11" width="18" height="11" rx="2"/>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                </svg>
+                <input type="password" id="password" name="password" placeholder="Tu contraseña" required
+                       autocomplete="current-password" autocapitalize="none" autocorrect="off">
+                <button type="button" class="ver" onclick="cambiarVisibilidad()" title="Mostrar/ocultar contraseña" aria-label="Mostrar u ocultar contraseña">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                        <circle cx="12" cy="12" r="3"/>
+                    </svg>
+                </button>
+            </div>
+
+            <button type="submit" class="btn-entrar">Iniciar Sesión</button>
+        </form>
+
+        <p class="pie">¿No tenés cuenta? <a th:href="@{/registro}">Registrate gratis</a></p>
+    </div>
+
+    <script>
+        function cambiarVisibilidad() {
+            const campo = document.getElementById('password');
+            campo.type = campo.type === 'password' ? 'text' : 'password';
+        }
+    </script>
+</body>
+</html>

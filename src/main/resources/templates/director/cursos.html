@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cursos · Dirección</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+<body class="app-body">
+    <th:block th:replace="~{fragments/sidebar :: sidebar('cursos')}"></th:block>
+
+    <main class="container">
+        <div th:if="${mensaje}" class="alerta alerta-ok" th:text="${mensaje}"></div>
+        <div th:if="${error}" class="alerta alerta-error" th:text="${error}"></div>
+
+        <section class="card">
+            <div class="card-head">
+                <h2>Cursos</h2>
+                <a href="/admin/cursos/nuevo" class="btn btn-primario">+ Nuevo curso</a>
+            </div>
+            <div class="tabla-wrap">
+                <table>
+                    <thead><tr><th>Nombre</th><th>Turno</th><th>Año</th><th>Acciones</th></tr></thead>
+                    <tbody>
+                        <tr th:each="c : ${cursos}">
+                            <td th:text="${c.nombre}"></td>
+                            <td th:text="${c.turno}"></td>
+                            <td th:text="${c.anio}"></td>
+                            <td>
+                                <a th:href="@{/admin/cursos/editar/{id}(id=${c.id})}" class="btn btn-suave btn-sm">Editar</a>
+                                <form th:action="@{/admin/cursos/eliminar/{id}(id=${c.id})}" method="post" style="display:inline;"
+                                      onsubmit="return confirm('¿Eliminar este curso?')">
+                                    <button type="submit" class="btn btn-peligro btn-sm">Eliminar</button>
+                                </form>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <script th:src="@{/js/sidebar.js}" defer></script>
+</body>
+</html>

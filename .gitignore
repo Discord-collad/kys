@@ -1,0 +1,42 @@
+HELP.md
+target/
+.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+/.freebuff/
+/nb-configuration.xml
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### Notas locales de desarrollo (no van al repo público) ###
+PROMPT_*.txt
+LOG_*.txt
+CAMBIOS_*.txt
+MEJORAS_*.md
+GUIA_*.md
+
+### VS Code ###
+.vscode/

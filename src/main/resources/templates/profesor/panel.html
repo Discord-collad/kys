@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Profesor · KYS</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+<body class="app-body">
+    <th:block th:replace="~{fragments/sidebar :: sidebar('inicio')}"></th:block>
+
+    <main class="container">
+        <th:block th:replace="~{fragments/saludo :: saludo('Revisa y gestiona las asistencias de tus alumnos.')}"></th:block>
+
+        <div th:if="${mensaje}" class="alerta alerta-ok" th:text="${mensaje}"></div>
+        <div th:if="${error}" class="alerta alerta-error" th:text="${error}"></div>
+
+        <!-- Aviso de Semana de Exámenes -->
+        <section th:if="${configExamen != null and configExamen.semanaExamenesActiva and mostrarAvisoExamenes}" class="card" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 2px solid #f59e0b;">
+            <div class="card-head">
+                <h2 style="color: #92400e;">📚 Semana de Exámenes</h2>
+            </div>
+            <p style="color: #92400e; font-size: 15px; margin-bottom: 15px;">
+                <strong th:text="${configExamen.mensajePersonalizado ?: '¡Atención! Esta es la semana previa a los exámenes.'}">Mensaje</strong>
+            </p>
+            <div th:if="${configExamen.fechaInicioSemana != null or configExamen.fechaFinSemana != null}" style="color: #92400e; font-size: 14px; margin-bottom: 15px;">
+                <span th:if="${configExamen.fechaInicioSemana}">
+                    Del <strong th:text="${#temporals.format(configExamen.fechaInicioSemana, 'dd/MM/yyyy')}"></strong>
+                </span>
+                <span th:if="${configExamen.fechaFinSemana}">
+                    al <strong th:text="${#temporals.format(configExamen.fechaFinSemana, 'dd/MM/yyyy')}"></strong>
+                </span>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <form th:action="@{/profesor/examenes/desactivar}" method="post">
+                    <button type="submit" class="btn btn-peligro btn-sm">Desactivar aviso</button>
+                </form>
+            </div>
+        </section>
+
+        <section class="stats">
+            <div class="stat-card">
+                <div class="stat-icon fondo-ambar">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                </div>
+                <div class="stat-info">
+                    <h3 th:text="${#lists.size(pendientes)}">0</h3>
+                    <p>Pendientes de validar</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon fondo-verde">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                </div>
+                <div class="stat-info">
+                    <h3 th:text="${#lists.size(hoy)}">0</h3>
+                    <p>Marcas hoy</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="card">
+            <div class="card-head">
+                <h2>Asistencias pendientes de validación</h2>
+                <a href="/profesor/asistencias" class="btn btn-suave">Ver historial</a>
+            </div>
+            <div class="tabla-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Alumno</th>
+                            <th>Fecha</th>
+                            <th>Entrada</th>
+                            <th>Observaciones</th>
+                            <th>Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="a : ${pendientes}">
+                            <td th:text="${a.usuario.nombre + ' ' + a.usuario.apellido}"></td>
+                            <td th:text="${#temporals.format(a.fecha, 'dd/MM/yyyy')}"></td>
+                            <td th:text="${a.horaEntrada != null} ? ${#temporals.format(a.horaEntrada, 'HH:mm')} : '---'"></td>
+                            <td th:text="${a.observaciones ?: '---'}"></td>
+                            <td style="display:flex; gap:6px;">
+                                <form th:action="@{/profesor/validar}" method="post" style="display:inline;">
+                                    <input type="hidden" name="asistenciaId" th:value="${a.id}" />
+                                    <input type="hidden" name="aprobado" value="true" />
+                                    <button type="submit" class="btn btn-exito btn-sm">Aprobar</button>
+                                </form>
+                                <form th:action="@{/profesor/validar}" method="post" style="display:inline;"
+                                      onsubmit="return confirm('¿Rechazar esta asistencia?')">
+                                    <input type="hidden" name="asistenciaId" th:value="${a.id}" />
+                                    <input type="hidden" name="aprobado" value="false" />
+                                    <button type="submit" class="btn btn-peligro btn-sm">Rechazar</button>
+                                </form>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(pendientes)}">
+                            <td colspan="5" class="vacio">No hay asistencias pendientes 🎉</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="card">
+            <div class="card-head"><h2>Asistencias de hoy</h2></div>
+            <div class="tabla-wrap">
+                <table>
+                    <thead>
+                        <tr><th>Alumno</th><th>Entrada</th><th>Salida</th><th>Estado</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="a : ${hoy}">
+                            <td th:text="${a.usuario.nombre + ' ' + a.usuario.apellido}"></td>
+                            <td th:text="${a.horaEntrada != null} ? ${#temporals.format(a.horaEntrada, 'HH:mm')} : '---'"></td>
+                            <td th:text="${a.horaSalida != null} ? ${#temporals.format(a.horaSalida, 'HH:mm')} : '---'"></td>
+                            <td>
+                                <span class="badge"
+                                      th:classappend="${a.estadoAsistencia == 'APROBADO'} ? 'badge-verde' : (${a.estadoAsistencia == 'RECHAZADO'} ? 'badge-rojo' : 'badge-ambar')"
+                                      th:text="${a.estadoAsistencia}"></span>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(hoy)}">
+                            <td colspan="4" class="vacio">Sin marcas hoy todavía</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <script th:src="@{/js/sidebar.js}" defer></script>
+</body>
+</html>

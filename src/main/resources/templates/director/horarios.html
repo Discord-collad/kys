@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Horarios · Dirección</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+<body class="app-body">
+    <th:block th:replace="~{fragments/sidebar :: sidebar('horarios')}"></th:block>
+
+    <main class="container">
+        <div th:if="${mensaje}" class="alerta alerta-ok" th:text="${mensaje}"></div>
+        <div th:if="${error}" class="alerta alerta-error" th:text="${error}"></div>
+
+        <section class="card">
+            <div class="card-head">
+                <h2>Turnos definidos</h2>
+                <a href="/admin/horarios/nuevo" class="btn btn-primario">+ Nuevo horario</a>
+            </div>
+            <div class="tabla-wrap">
+                <table>
+                    <thead><tr><th>Nombre</th><th>Entrada</th><th>Salida</th><th>Tolerancia</th><th>Acciones</th></tr></thead>
+                    <tbody>
+                        <tr th:each="h : ${horarios}">
+                            <td th:text="${h.nombre}"></td>
+                            <td th:text="${#temporals.format(h.horaEntrada, 'HH:mm')}"></td>
+                            <td th:text="${#temporals.format(h.horaSalida, 'HH:mm')}"></td>
+                            <td th:text="${h.toleranciaMinutos + ' min'}"></td>
+                            <td>
+                                <a th:href="@{/admin/horarios/editar/{id}(id=${h.id})}" class="btn btn-suave btn-sm">Editar</a>
+                                <form th:action="@{/admin/horarios/eliminar/{id}(id=${h.id})}" method="post" style="display:inline;"
+                                      onsubmit="return confirm('¿Eliminar este horario?')">
+                                    <button type="submit" class="btn btn-peligro btn-sm">Eliminar</button>
+                                </form>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(horarios)}">
+                            <td colspan="5" class="vacio">No hay horarios definidos. Se crean automáticamente al iniciar.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <script th:src="@{/js/sidebar.js}" defer></script>
+</body>
+</html>

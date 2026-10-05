@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asignar horario · Dirección</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+<body class="app-body">
+    <th:block th:replace="~{fragments/sidebar :: sidebar('asignar-horario')}"></th:block>
+
+    <main class="container" style="max-width:640px;">
+        <div th:if="${mensaje}" class="alerta alerta-ok" th:text="${mensaje}"></div>
+        <section class="card">
+            <div class="card-head"><h2>Asignar horario a un usuario</h2></div>
+            <form th:action="@{/admin/horarios/asignar}" method="post">
+                <div class="form-group">
+                    <label>Usuario</label>
+                    <select name="usuarioId" required>
+                        <option value="">Elegí un usuario…</option>
+                        <option th:each="u : ${usuarios}"
+                                th:value="${u.id}"
+                                th:text="${u.nombre + ' ' + u.apellido + ' (' + u.username + ')'}"></option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Horario</label>
+                    <select name="horarioId" required>
+                        <option value="">Elegí un horario…</option>
+                        <option th:each="h : ${horarios}"
+                                th:value="${h.id}"
+                                th:text="${h.nombre + ' (' + #temporals.format(h.horaEntrada,'HH:mm') + ' - ' + #temporals.format(h.horaSalida,'HH:mm') + ')'}"></option>
+                    </select>
+                </div>
+                <div class="acciones-form">
+                    <button type="submit" class="btn btn-primario">Asignar</button>
+                </div>
+            </form>
+        </section>
+    </main>
+
+    <script th:src="@{/js/sidebar.js}" defer></script>
+</body>
+</html>

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuración · KYS</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+<body class="app-body">
+    <th:block th:replace="~{fragments/sidebar :: sidebar('inicio')}"></th:block>
+
+    <main class="container">
+        <th:block th:replace="~{fragments/saludo :: saludo('Configura los periodos lectivos y la semana de exámenes.')}"></th:block>
+
+        <div th:if="${mensaje}" class="alerta alerta-ok" th:text="${mensaje}"></div>
+        <div th:if="${error}" class="alerta alerta-error" th:text="${error}"></div>
+
+        <!-- Configuración de Semana de Exámenes -->
+        <section class="card">
+            <div class="card-head">
+                <h2>Semana de Exámenes</h2>
+            </div>
+            <div th:if="${configExamen.semanaExamenesActiva}" class="alerta alerta-ok" style="margin-bottom: 20px;">
+                La semana de exámenes está ACTIVA
+            </div>
+            <div th:unless="${configExamen.semanaExamenesActiva}" class="alerta alerta-error" style="margin-bottom: 20px;">
+                La semana de exámenes está INACTIVA
+            </div>
+
+            <form th:action="@{/admin/configuracion/examenes/guardar}" method="post" th:object="${configExamen}">
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Fecha inicio semana</label>
+                        <input type="date" th:field="*{fechaInicioSemana}">
+                    </div>
+                    <div class="form-group">
+                        <label>Fecha fin semana</label>
+                        <input type="date" th:field="*{fechaFinSemana}">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Mensaje personalizado (opcional)</label>
+                    <input type="text" th:field="*{mensajePersonalizado}" placeholder="Ej: ¡Preparense para los exámenes finales!">
+                </div>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label class="check-row">
+                            <input type="checkbox" th:field="*{mostrarAAumnos}">
+                            Mostrar a alumnos
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="check-row">
+                            <input type="checkbox" th:field="*{mostrarAProfesores}">
+                            Mostrar a profesores
+                        </label>
+                    </div>
+                </div>
+                <div class="acciones-form">
+                    <button type="submit" class="btn btn-primario">Guardar configuración</button>
+                    <button type="submit" formaction="/admin/configuracion/examenes/activar" class="btn btn-exito">Activar semana</button>
+                    <button type="submit" formaction="/admin/configuracion/examenes/desactivar" class="btn btn-peligro">Desactivar semana</button>
+                </div>
+            </form>
+        </section>
+
+        <!-- Gestión de Periodos Lectivos -->
+        <section class="card">
+            <div class="card-head">
+                <h2>Periodos Lectivos</h2>
+                <button type="button" onclick="document.getElementById('nuevoPeriodoForm').style.display='block'" class="btn btn-primario">+ Nuevo periodo</button>
+            </div>
+
+            <div id="nuevoPeriodoForm" style="display:none; margin-bottom: 20px; padding: 20px; background: #f8fafc; border-radius: 12px;">
+                <h3 style="margin-bottom: 15px;">Nuevo Periodo</h3>
+                <form th:action="@{/admin/configuracion/periodos/guardar}" method="post" th:object="${nuevoPeriodo}">
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label>Nombre del periodo</label>
+                            <input type="text" th:field="*{nombre}" placeholder="Ej: 2024 - Primer Semestre" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Duración (semanas)</label>
+                            <input type="number" th:field="*{duracionSemanas}" placeholder="Ej: 16" required>
+                        </div>
+                    </div>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label>Fecha inicio</label>
+                            <input type="date" th:field="*{fechaInicio}" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Fecha fin</label>
+                            <input type="date" th:field="*{fechaFin}" required>
+                        </div>
+                    </div>
+                    <div class="acciones-form">
+                        <button type="submit" class="btn btn-exito">Guardar periodo</button>
+                        <button type="button" onclick="document.getElementById('nuevoPeriodoForm').style.display='none'" class="btn btn-suave">Cancelar</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="tabla-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Inicio</th>
+                            <th>Fin</th>
+                            <th>Duración</th>
+                            <th>Estado</th>
+                            <th>Último</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="periodo : ${periodos}">
+                            <td th:text="${periodo.nombre}">Nombre</td>
+                            <td th:text="${#temporals.format(periodo.fechaInicio, 'dd/MM/yyyy')}">Inicio</td>
+                            <td th:text="${#temporals.format(periodo.fechaFin, 'dd/MM/yyyy')}">Fin</td>
+                            <td th:text="${periodo.duracionSemanas + ' semanas'}">Duración</td>
+                            <td>
+                                <span th:if="${periodo.activo}" class="badge badge-verde">Activo</span>
+                                <span th:unless="${periodo.activo}" class="badge badge-rojo">Inactivo</span>
+                            </td>
+                            <td>
+                                <span th:if="${periodo.esUltimoPeriodo}" class="badge badge-indigo">Sí</span>
+                                <span th:unless="${periodo.esUltimoPeriodo}" class="badge badge-ambar">No</span>
+                            </td>
+                            <td>
+                                <form th:action="@{/admin/configuracion/periodos/activar/{id}(id=${periodo.id})}" method="post" style="display:inline;">
+                                    <button type="submit" class="btn btn-suave btn-sm" th:disabled="${periodo.activo}">Activar</button>
+                                </form>
+                                <form th:action="@{/admin/configuracion/periodos/marcar-ultimo/{id}(id=${periodo.id})}" method="post" style="display:inline;">
+                                    <button type="submit" class="btn btn-suave btn-sm" th:disabled="${periodo.esUltimoPeriodo}">Marcar último</button>
+                                </form>
+                                <form th:action="@{/admin/configuracion/periodos/eliminar/{id}(id=${periodo.id})}" method="post" style="display:inline;"
+                                      onsubmit="return confirm('¿Eliminar este periodo?')">
+                                    <button type="submit" class="btn btn-peligro btn-sm">Eliminar</button>
+                                </form>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(periodos)}">
+                            <td colspan="7" class="vacio">No hay periodos registrados todavía.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p class="muted small">
+                <strong>Nota:</strong> Solo puede haber un periodo activo a la vez. El "último periodo" indica cuándo termina el año lectivo.
+            </p>
+        </section>
+    </main>
+
+    <script th:src="@{/js/sidebar.js}" defer></script>
+</body>
+</html>

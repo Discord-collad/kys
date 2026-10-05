@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi historial · KYS</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+<body class="app-body">
+    <th:block th:replace="~{fragments/sidebar :: sidebar('historial')}"></th:block>
+
+    <main class="container">
+        <div th:if="${mensaje}" class="alerta alerta-ok" th:text="${mensaje}"></div>
+        <div th:if="${error}" class="alerta alerta-error" th:text="${error}"></div>
+
+        <section class="page-head">
+            <div>
+                <h1>Historial de asistencias</h1>
+                <p class="muted">Todas tus asistencias registradas.</p>
+            </div>
+        </section>
+
+        <section class="card">
+            <div class="tabla-wrap">
+                <table>
+                    <thead><tr><th>Fecha</th><th>Entrada</th><th>Salida</th><th>Estado</th><th>Observaciones</th></tr></thead>
+                    <tbody>
+                        <tr th:each="asistencia : ${asistencias}">
+                            <td th:text="${#temporals.format(asistencia.fecha, 'dd/MM/yyyy')}"></td>
+                            <td th:text="${asistencia.horaEntrada != null} ? ${#temporals.format(asistencia.horaEntrada, 'HH:mm')} : '---'"></td>
+                            <td th:text="${asistencia.horaSalida != null} ? ${#temporals.format(asistencia.horaSalida, 'HH:mm')} : '---'"></td>
+                            <td>
+                                <span class="badge"
+                                      th:classappend="${asistencia.estadoAsistencia == 'APROBADO'} ? 'badge-verde' : (${asistencia.estadoAsistencia == 'RECHAZADO'} ? 'badge-rojo' : 'badge-ambar')"
+                                      th:text="${asistencia.estadoAsistencia}"></span>
+                            </td>
+                            <td th:text="${asistencia.observaciones ?: '---'}"></td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(asistencias)}">
+                            <td colspan="5" class="vacio">Todavía no tenés asistencias. ¡Marcá tu entrada!</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <script th:src="@{/js/sidebar.js}" defer></script>
+</body>
+</html>
