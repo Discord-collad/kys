@@ -39,4 +39,4 @@ ENV SPRING_PROFILES_ACTIVE=prod \
 
 EXPOSE 8080
 
-ENTRYPOINT ["sh", "-c", "exec java $JAVA_OPTS -jar /app/kys-app.jar \"$@\"", "--"]
+ENTRYPOINT ["sh", "-c", "if [ -n \"$SPRING_DATASOURCE_URL\" ] && [ \"${SPRING_DATASOURCE_URL#postgresql://}\" != \"$SPRING_DATASOURCE_URL\" ]; then export SPRING_DATASOURCE_URL=\"jdbc:$SPRING_DATASOURCE_URL\"; elif [ -n \"$SPRING_DATASOURCE_URL\" ] && [ \"${SPRING_DATASOURCE_URL#postgres://}\" != \"$SPRING_DATASOURCE_URL\" ]; then export SPRING_DATASOURCE_URL=\"jdbc:postgresql://${SPRING_DATASOURCE_URL#postgres://}\"; fi; exec java $JAVA_OPTS -jar /app/kys-app.jar \"$@\"", "--"]
