@@ -11,6 +11,9 @@ services:
     envVars:
       - key: SPRING_PROFILES_ACTIVE
         value: prod
+      # Armamos la URL JDBC con componentes (workaround: connectionString en Render
+      # viene sin dominio regional ni puerto y rompe el driver).
+      # Los nombres DB_HOST / DB_PORT / DB_NAME matchean con application.properties.
       - key: DB_HOST
         fromDatabase:
           name: kys-db
@@ -31,15 +34,15 @@ services:
         fromDatabase:
           name: kys-db
           property: password
-      # En prod no se ejecuta migration.sql al arrancar.
+      # En prod NO corremos migration.sql: los datos se restauran con pg_restore
       - key: SPRING_SQL_INIT_MODE
         value: never
 
-# ---------- DB ----------
-databases:
-  - name: kys-db
+  # ---------- DB ----------
+  - type: postgres
+    name: kys-db
     plan: free
     region: oregon
     databaseName: kys
     user: kys
-    ipAllowList: []
+    ipAllowList: []  # solo internas; para restaurar se permite temporalmente
