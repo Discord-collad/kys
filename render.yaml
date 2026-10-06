@@ -24,15 +24,15 @@ services:
         fromDatabase:
           name: kys-db
           property: password
-      # En prod NO corremos migration.sql al arrancar: los datos se restauran con pg_restore
+      # En prod no se ejecuta migration.sql al arrancar.
       - key: SPRING_SQL_INIT_MODE
         value: never
 
-  # ---------- DB ----------
-  - type: postgres
-    name: kys-db
+# ---------- DB ----------
+databases:
+  - name: kys-db
     plan: free
     region: oregon
     databaseName: kys
     user: kys
-    ipAllowList: []  # solo internas; para restaurar se permite temporalmente
+    ipAllowList: []
