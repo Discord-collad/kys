@@ -11,11 +11,18 @@ services:
     envVars:
       - key: SPRING_PROFILES_ACTIVE
         value: prod
-      # DB inyectada automáticamente desde kys-db
-      - key: SPRING_DATASOURCE_URL
+      - key: DB_HOST
         fromDatabase:
           name: kys-db
-          property: connectionString
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: kys-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: kys-db
+          property: database
       - key: SPRING_DATASOURCE_USERNAME
         fromDatabase:
           name: kys-db
