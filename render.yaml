@@ -17,4 +17,4 @@ services:
       - key: SPRING_DATASOURCE_PASSWORD
         sync: false
       - key: SPRING_SQL_INIT_MODE
-        value: always
+        value: never
