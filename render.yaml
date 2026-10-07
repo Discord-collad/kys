@@ -10,33 +10,11 @@ services:
     envVars:
       - key: SPRING_PROFILES_ACTIVE
         value: prod
-      - key: DB_HOST
-        fromDatabase:
-          name: kys-db
-          property: host
-      - key: DB_PORT
-        fromDatabase:
-          name: kys-db
-          property: port
-      - key: DB_NAME
-        fromDatabase:
-          name: kys-db
-          property: database
+      - key: SPRING_DATASOURCE_URL
+        sync: false
       - key: SPRING_DATASOURCE_USERNAME
-        fromDatabase:
-          name: kys-db
-          property: user
+        sync: false
       - key: SPRING_DATASOURCE_PASSWORD
-        fromDatabase:
-          name: kys-db
-          property: password
+        sync: false
       - key: SPRING_SQL_INIT_MODE
-        value: never
-
-databases:
-  - name: kys-db
-    plan: free
-    region: oregon
-    databaseName: kys
-    user: kys
-    ipAllowList: []
+        value: always
