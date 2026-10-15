@@ -30,7 +30,10 @@ build/
 HELP.md
 DEPLOY_RENDER.md
 
-# Logs y archivos del usuario
-*.log
+# Secrets and local environment
+.env
+.env.*
+!.env.example
+
 *.bak
 *.tmp
